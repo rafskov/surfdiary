@@ -40,16 +40,30 @@
   font-size: 16px;
 }
 
+
 .button {
   border-radius: 30px;
   height: 60px;
   max-width: auto;
   font-size: 20px;
-  background: #D0C2DB;
+  background: #d4f7f7;
   color: #333333;
   text-transform: uppercase;
   font-weight: 500;
   display:inline-block;
-  margin: 10px 10px;
-  padding-left: 10px;
+  margin: auto;
+  padding: 15px 25px;
+  text-align:center;
+  cursor:pointer;
+  outline:none;
+  box-shadow: 0 5px #666;
+
 }
+
+
+.button:hover {background-color: #d42763}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
