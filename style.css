@@ -2,7 +2,7 @@
   font-family: sans-serif;
   text-align: center;
   background: #27d4d4;
-  max-width: 500px;
+  max-width: 100%;
   padding: 30px 10px;
   margin: 0 auto;
 }
@@ -14,7 +14,7 @@
 
 #main_diary  h4 {
   font-weight: 300;
-  max-width: 500px;
+  max-width: 100%;
   margin: 0 auto;
   padding-bottom: 50px;
 }
@@ -31,7 +31,7 @@
 #main_diary  .form-drop-down select {
   padding: 10px;
   height: 40px;
-  max-width: 200px;
+  max-width: 100%;
   width: 100%;
   margin: 10px 0;
   background: #fffff;
@@ -40,20 +40,10 @@
   font-size: 16px;
 }
 
-
-#main_diary  input {
-  font-size: 16px;
-  height: 40px;
-  max-width: 200px;
-  width: 100%;
-  margin: 10px 0;
-  padding-left: 10px;
-}
-
 .button {
   border-radius: 30px;
   height: 60px;
-  max-width: 200px;
+  max-width: auto;
   font-size: 20px;
   background: #D0C2DB;
   color: #333333;
