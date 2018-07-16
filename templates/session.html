@@ -1,0 +1,8 @@
+<!doctype html>
+
+{% if session_rank %}
+  <h1> Thanks for recording your session. It was {{session_rank}} </h1>
+
+{% else%}
+  <h1> No session rank passed! </h1>
+{% endif %}

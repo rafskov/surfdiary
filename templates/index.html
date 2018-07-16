@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <!--responsive deisgn to take control of viewport dimensions and scaling-->
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css') }}">
 </head>
 
 
@@ -16,7 +16,7 @@
 
 
     <div id="main_diary">
-      <form id="session_form">
+      <form method="POST" action ="/send" id="session_form">
 
         <div >
             <h2>Welcome to <strong>Surf Diary v 1.0</strong></h2>
@@ -51,7 +51,7 @@
                 <option value=""></option>
                 <option value="E">East</option>
                 <option value="SW">Southwest</option>
-                <option value="NW">North</option>
+                <option value="NW">Northwest</option>
                 <option value="N">North</option>
                 <option value="NE">Northeast</option>
                 <option value="W">West</option>
@@ -64,7 +64,7 @@
                 <option value=""></option>
                 <option value="E">East</option>
                 <option value="SW">Southwest</option>
-                <option value="NW">North</option>
+                <option value="NW">Northwest</option>
                 <option value="N">North</option>
                 <option value="NE">Northeast</option>
                 <option value="W">West</option>
@@ -90,7 +90,7 @@
                 <option value=""></option>
                 <option value="Epic">All time!</option>
                 <option value="Ok">It was good. Totally worth it.</option>
-                <option value="Stayhome">Should have stayed home</option>
+                <option value="Better to stay home">Should have stayed home</option>
               </select>
 
 
@@ -108,7 +108,7 @@
 
           <div class="inline">
             <span>
-              <button type ="button" class="button">Submit</button>
+              <input type ="submit" value="submit"></button>
               <button id="reset_button" type ="button" onclick="resetform()" class="button">Reset</button>
 
             </span>
@@ -119,7 +119,7 @@
     </div>
 
 
-    <script src="app.js"></script>
+    <script src="{{ url_for('static',filename='app.js') }}"></script>
 
   </body>
 <!-- today's progress: setup anaconda, flask, and got local server to return a template.-->
