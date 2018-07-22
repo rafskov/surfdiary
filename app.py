@@ -44,6 +44,7 @@ def send():
 
         #return redirect(url_for('session_log')) #dont return view or template
         result = Sessions.query.all() 
+        result.reverse()
         return render_template('session.html',result=result)
 
 
