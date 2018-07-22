@@ -1,10 +1,14 @@
-<!doctype html>
+<!DOCTYPE html>
 
-{% if session_rank %}
+  {% for r in result %}
+
   <h1> Thanks for recording your session! </h1>
-  <p> You surfed at {{session_beach}} on a {{session_swell}} swell when the wind was from the {{session_wind}} on a {{session_tide}} tide.</p>
-  <p> Overall you session was {{session_rank}} </p>
+  <p> You surfed at {{r.beach}} on a {{r.swell}} swell when the wind was from the {{r.wind}} on a {{r.tide}} tide.</p>
+  <p> Overall you session was {{r.rank}} </p>
 
-{% else%}
-  <h1> No session rank passed! </h1>
-{% endif %}
+  {% endfor %}
+
+
+  <a href="{{ url_for('index')}}">Go Home </a>
+
+</html>
