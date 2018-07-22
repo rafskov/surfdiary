@@ -1,5 +1,6 @@
 from flask import Flask, request,render_template,redirect,url_for
 from flask_sqlalchemy import SQLAlchemy
+from buoyant import Buoy
 
 
 app = Flask(__name__)
@@ -14,7 +15,9 @@ class Sessions(db.Model):
     #create columns
     id = db.Column(db.Integer,primary_key=True)
     beach = db.Column(db.String(100))
-    swell = db.Column(db.String(3))
+    swell_direction = db.Column(db.Integer())
+    swell_height = db.Column(db.Integer())
+    swell_period = db.Column(db.Integer())
     wind = db.Column(db.String(3))
     rank = db.Column(db.String(100))
     tide = db.Column(db.String(50))
@@ -29,23 +32,43 @@ def index():
     return render_template('index.html',result=result)
 
 @app.route('/send',methods=['POST','GET'])
-
 def send():
     if request.method =='POST':
         session_rank = request.form['overall']
         session_beach= request.form['spots']
-        session_swell= request.form['swell']
+        #session_swell= request.form['swell']
         session_wind= request.form['wind']
         session_tide=request.form['tide']
 
-        session_update = Sessions(beach=session_beach,swell=session_swell,wind=session_wind,tide=session_tide,rank=session_rank)
+
+        #get buoy data for all beaches
+        sf = Buoy(46237)
+        santacruz = Buoy(46042)
+        santacruzbeaches =['PleasurePoint','4mile']
+
+        #map buoy to beach
+        if session_beach not in santacruzbeaches:
+            waves = sf.waves
+        else:
+            waves = santacruz.waves
+
+        swell_period = waves['sea_surface_swell_wave_period']
+        swell_height = waves['sea_surface_swell_wave_significant_height']
+        swell_direction = str(360-waves['sea_surface_swell_wave_to_direction'])+'degrees'
+
+
+
+        session_update = Sessions(beach=session_beach,swell_height=swell_height,swell_period=swell_period,swell_direction=swell_direction,wind=session_wind,tide=session_tide,rank=session_rank)
         db.session.add(session_update)
         db.session.commit()
 
         #return redirect(url_for('session_log')) #dont return view or template
-        result = Sessions.query.all() 
+        result = Sessions.query.all()
         result.reverse()
         return render_template('session.html',result=result)
+
+
+
 
 
 
