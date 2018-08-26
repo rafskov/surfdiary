@@ -21,6 +21,8 @@ class Sessions(db.Model):
     wind = db.Column(db.String(3))
     rank = db.Column(db.String(100))
     tide = db.Column(db.String(50))
+    stime = db.Column(db.String(20))
+    etime = db.Column(db.String(20))
     #translates table
 
 
@@ -36,29 +38,25 @@ def send():
     if request.method =='POST':
         session_rank = request.form['overall']
         session_beach= request.form['spots']
-        #session_swell= request.form['swell']
-        session_wind= request.form['wind']
-        session_tide=request.form['tide']
+        stime =request.form['stimepicker']
+        etime = request.form['etimepicker']
 
 
-        #get buoy data for all beaches
-        sf = Buoy(46237)
-        santacruz = Buoy(46042)
-        santacruzbeaches =['PleasurePoint','4mile']
-
-        #map buoy to beach
-        if session_beach not in santacruzbeaches:
-            waves = sf.waves
-        else:
-            waves = santacruz.waves
-
-        swell_period = waves['sea_surface_swell_wave_period']
-        swell_height = waves['sea_surface_swell_wave_significant_height']
-        swell_direction = str(360-waves['sea_surface_swell_wave_to_direction'])+'degrees'
+        #need to change code to reflect querying from cached db
 
 
+        #swell_period = waves_out['sea_surface_swell_wave_period']
+        #swell_height = waves_out['sea_surface_swell_wave_significant_height']
+        #swell_direction = str(360-waves_out['sea_surface_swell_wave_to_direction'])+'degrees'
 
-        session_update = Sessions(beach=session_beach,swell_height=swell_height,swell_period=swell_period,swell_direction=swell_direction,wind=session_wind,tide=session_tide,rank=session_rank)
+
+        session_update = Sessions(beach=session_beach,rank=session_rank,stime=stime,etime=etime)
+
+        print(session_update.stime)
+
+        '''swell_height=swell_height,swell_period=swell_period,
+        swell_direction=swell_direction,wind=session_wind,tide=session_tide,'''
+
         db.session.add(session_update)
         db.session.commit()
 
