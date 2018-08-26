@@ -8,6 +8,12 @@
   <!--responsive deisgn to take control of viewport dimensions and scaling-->
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='style.css') }}">
+  <link rel ="stylesheet" type="text/css" href="{{ url_for('static',filename='wickedpicker.css') }}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="{{url_for('static', filename='wickedpicker.js')}}"></script>
+
+
+
 </head>
 
 
@@ -44,45 +50,23 @@
 
 
 
+              <div class="form-drop-down">
+                  <label for="stimepicker">Session Start Time:</label>
+                  <input type="text" id="stimepicker" name="stimepicker" class="timepicker form-control">
+                  <br>
+                  <label for="etimepicker">Session End Time:</label>
 
-              <label >Today's swell was from the:</label>
-
-              <select class="" name="swell">
-                <option value=""></option>
-                <option value="E">East</option>
-                <option value="SW">Southwest</option>
-                <option value="NW">Northwest</option>
-                <option value="N">North</option>
-                <option value="NE">Northeast</option>
-                <option value="W">West</option>
-                <option value="SE">Southeast</option>
-                <option value="S">South</option>
-              </select>
-
-              <label for="wind">Today's wind was from the:</label>
-              <select id="wind" class="" name="wind">
-                <option value=""></option>
-                <option value="E">East</option>
-                <option value="SW">Southwest</option>
-                <option value="NW">Northwest</option>
-                <option value="N">North</option>
-                <option value="NE">Northeast</option>
-                <option value="W">West</option>
-                <option value="SE">Southeast</option>
-                <option value="S">South</option>
-              </select>
+                  <input type="text" id="etimepicker" name="etimepicker" class="timepicker form-control">
+                  <br>
+                      <script type="text/javascript">
+                      $('.timepicker').wickedpicker({twentyFour: false});
+                      $('.timepicker').wickedpicker({twentyFour: false});
+                      </script>
+              </div>
 
 
 
 
-
-              <label for="tide">Today's tide was:</label>
-
-              <select id="tide" class="" name="tide">
-                <option value=""></option>
-                <option value="Incoming">Incoming</option>
-                <option value="Outgoing">Outgoing</option>
-              </select>
 
               <label for="overall">Overall my session was:</label>
 
@@ -120,6 +104,8 @@
 
 
     <script src="{{ url_for('static',filename='app.js') }}"></script>
+
+
 
   </body>
 <!-- today's progress: setup anaconda, flask, and got local server to return a template.-->
