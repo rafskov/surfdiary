@@ -1,15 +1,53 @@
 from flask import Flask, request,render_template,redirect,url_for
 from flask_sqlalchemy import SQLAlchemy
 from buoyant import Buoy
+from flask_bootstrap import Bootstrap
 import sqlite3
 import datetime
 from pytz import timezone,utc
 import pytz
+from flask_wtf import FlaskForm #convert forms to flask wtf
+from wtforms import StringField,PasswordField,BooleanField #BooleanField is for the checkbox
+from wtforms.validators import InputRequired,Email,Length
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_user, login_required,logout_user,current_user
+#need to put routes, database, and forms in sep. files
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite://///Users/rafael.skovron/Downloads/PycharmProjects/surfdiary/session.db' #config file should be separate, tells sqlal how to connect
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+app.config['SECRET_KEY']="Thisissupposedtobesecret"
+bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login' #set the login view
+
+
+class User(UserMixin, db.Model): #create user table; Mixin adds stuff to User class. how flask login works with user class ClassName(object):
+
+    id = db.Column(db.Integer,primary_key=True)
+    username = db.Column(db.String(15),unique=True)
+    email = db.Column(db.String(50),unique=True)
+    password= db.Column(db.String(80))
+
+@login_manager.user_loader #connects flask login to data in db
+def load_user(user_id):
+    return User.query.get(int(user_id)) #query from User class using user_id
+
+
+
+class LoginForm(FlaskForm): #create login form
+    username = StringField('username',validators=[InputRequired(),Length(min=4,max=15)])
+    password = PasswordField('password',validators=[InputRequired(),Length(min=8,max=80)])
+    remember = BooleanField('remember me')
+
+class RegisterForm(FlaskForm):
+    email = StringField('email',validators=[InputRequired(),Email(message='Invalid email'),Length(max=50)])
+    username = StringField('username',validators=[InputRequired(),Length(min=4,max=15)])
+    password = PasswordField('password',validators=[InputRequired(),Length(min=8,max=80)])
+
+
 
 utc = pytz.utc
 
@@ -47,13 +85,54 @@ class Weather(db.Model):
     dtbuoy= db.Column(db.String(20))
 
 
-
 @app.route('/')
 def index():
 
     result = Sessions.query.all() #return results in sessions table in a list of sqlacl objects
 
     return render_template('index.html',result=result)
+
+@app.route('/login',methods=['GET','POST'])
+def login():
+    form = LoginForm() #instat. login so you can pass class to the form in the template
+
+    if form.validate_on_submit(): #sees if form has been submitted
+        #return '<h1>'+form.username.data + ' '+form.password.data+'</h1>'
+
+        user = User.query.filter_by(username=form.username.data).first() #query user table for a user. you want to check is they are in the table first
+        if user: #if they exist
+            if check_password_hash(user.password,form.password.data): #compare hash in table to what was passed in from the form
+                login_user(user,remember=form.remember.data)#login the user
+                return redirect(url_for('dashboard'))
+        return '<h1> invalid user name or password </h1>'
+
+    return render_template('login.html', form=form)
+
+@app.route('/signup',methods=['GET','POST'])
+def signup():
+    form = RegisterForm() #init. form
+
+    if form.validate_on_submit(): #test the post
+        hashed_password = generate_password_hash(form.password.data,method='sha256')
+        new_user = User(username=form.username.data,email=form.username.data,password=hashed_password) #this instat. the user and passes in the form data
+        db.session.add(new_user)
+        db.session.commit()
+        return "<h1> new user has been created </h1>"
+        #return '<h1>'+form.username.data+ ' '+form.email.data+ ' ' +form.password.data+ '</h1>'
+
+    return render_template('signup.html',form=form) #pass initialized form to template
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template('dashboard.html',name=current_user.username)
+
+
+@app.route('/logout')
+@login_required #require loggged in status
+def logout():
+    logout_user() #log them out
+    return redirect(url_for('index'))
 
 @app.route('/send',methods=['POST','GET'])
 def send():
@@ -121,7 +200,7 @@ def getsession_weather():
         utc_etime = lcl_etime.astimezone(utc)
 
 
-        utc_etime_offset = utc_etime - datetime.timedelta(days=1)
+        utc_etime_offset = utc_etime - datetime.timedelta(days=20)
 
         print('offset',utc_etime_offset)
         print('utcetime',utc_etime)
@@ -153,18 +232,31 @@ def getsession_weather():
         c.execute("select * from weather where dtbuoy < (?) AND dtbuoy >= (?) AND key = (?)", (utc_etime.strftime("%Y-%m-%d %H:%M"),utc_etime_offset.strftime("%Y-%m-%d %H:%M"),key,))
 
         weather_update = c.fetchall()
+        print(len(weather_update))
 
-        weather_update = weather_update[-1:]
+        print("printing weather UPDATE")
+        print(weather_update)
+        weather_update = weather_update[-1]
+        print("printing last ITEM IN WEATHER UPDATE")
+        print(weather_update)
 
         print('printing length of weather update', len(weather_update), type(weather_update))
 
         print (list(weather_update))
 
 
-        import pdb; pdb.set_trace()
+        #import pdb; pdb.set_trace()
+        print("we're debugging")
+        print(rank_sesh)
+        print(weather_update[4])
+        print(weather_update[3])
+        print(weather_update[5])
+        print(weather_update[0])
+        print(weather_update[2])
+        print(weather_update[6])
 
 
-        c.execute('''INSERT INTO sessions(rank,swell_direction,swell_height,swell_period,wind,tide,beachregion) VALUES (?,?,?,?,?,?,?)''',[rank_sesh,weather_update[0][4],weather_update[0][3],weather_update[0][5],weather_update[0][0],weather_update[0][2],weather_update[0][6]])
+        c.execute('''INSERT INTO sessions(rank_sesh,swell_direction,swell_height,swell_period,wind,tide,beachregion) VALUES (?,?,?,?,?,?,?)''',[rank_sesh,weather_update[4],weather_update[3],weather_update[5],weather_update[0],weather_update[2],weather_update[6]])
 
         conn.commit()
 
