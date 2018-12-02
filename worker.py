@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 
 '''this script retrieves weather and tide data for each day for each beach, everyday as a scheduled task
 and populates the SQLite database so that a user can enter their session time and get the right weather data
