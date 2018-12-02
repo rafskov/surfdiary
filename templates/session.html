@@ -1,21 +1,505 @@
-<!DOCTYPE html>
-
-  {% for r in result %}
-
-  <h1> Thanks for recording your session! </h1>
-  <p> You surfed at {{r.beach}} on a {{r.swell}} swell when the wind was from the {{r.wind}} on a {{r.tide}} tide. You started your session at {{r.stime}} and ended it at {{r.etime}}.
-    "</p>
-  <p> Overall you session was {{r.rank}} </p>
 
 
 
-  <h1> Thanks for recording your session! </h1>
-  <p> You surfed at {{r.beach}} on a {{r.swell_height}} meter swell  coming from {{r.swell_direction}} with {{r.swell_period}} period when the wind was from the {{r.wind}} on a {{r.tide}} tide.</p>
-  <p> Overall you session was {{r.rank}} </p>
-
-  {% endfor %}
 
 
-  <a href="{{ url_for('index')}}">Go Home </a>
+<!doctype html>
 
-</html>
+
+
+ 
+
+ 
+
+
+
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>track your surf session</title>
+
+
+
+          <style>
+
+    
+
+            .my-flex-container {
+              border: 2px solid gray;
+              height: 100%;
+              margin-bottom: 20px;
+            }
+           
+            }
+            .surferrank {
+              background-color: lightgrey;
+              border: 1px dotted grey;
+              height: 25%;
+              margin-bottom:20px;
+            }
+            .surfstats{
+              background-color: lightgrey;
+              border: 1px dotted grey;
+              height: 25%;
+              margin-bottom:20px;
+
+            }
+
+
+            body {
+                color: #404040;
+                font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+                margin: 0;
+                padding: 0;
+                -webkit-font-smoothing: antialiased;
+              }
+
+              * {
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+              }
+
+              h1 {
+                font-size: 22px;
+                margin: 0;
+                font-weight: 400;
+                line-height: 20px;
+                padding: 20px 2px;
+              }
+
+              a {
+                color: #404040;
+                text-decoration: none;
+              }
+
+              a:hover {
+                color: #101010;
+              }
+
+              .sidebar {
+                position: absolute;
+                width: 33.3333%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                overflow: hidden;
+                border-right: 1px solid rgba(0, 0, 0, 0.25);
+              }
+
+              .pad2 {
+                padding: 20px;
+              }
+
+              .map {
+                position: absolute;
+                left: 33.3333%;
+                width: 66.6666%;
+                top: 0;
+                bottom: 0;
+              }
+
+              .heading {
+                background: #fff;
+                border-bottom: 1px solid #eee;
+                height: 60px;
+                line-height: 60px;
+                padding: 0 10px;
+              }
+
+              .listings {
+                height: 100%;
+                overflow: auto;
+                padding-bottom: 60px;
+              }
+
+              .listings .item {
+                display: block;
+                border-bottom: 1px solid #eee;
+                padding: 10px;
+                text-decoration: none;
+              }
+
+              .listings .item:last-child { border-bottom: none; }
+
+              .listings .item .title {
+                display: block;
+                color: #00853e;
+                font-weight: 700;
+              }
+
+              .listings .item .title small { font-weight: 400; }
+
+              .listings .item.active .title,
+              .listings .item .title:hover { color: #8cc63f; }
+
+              .listings .item.active {
+                background-color: #f8f8f8;
+              }
+
+              ::-webkit-scrollbar {
+                width: 3px;
+                height: 3px;
+                border-left: 0;
+                background: rgba(0, 0, 0, 0.1);
+              }
+
+              ::-webkit-scrollbar-track {
+                background: none;
+              }
+
+              ::-webkit-scrollbar-thumb {
+                background: #00853e;
+                border-radius: 0;
+              }
+
+              .clearfix { display: block; }
+
+              .clearfix::after {
+                content: '.';
+                display: block;
+                height: 0;
+                clear: both;
+                visibility: hidden;
+              }
+
+              * Marker tweaks */
+              .mapboxgl-popup-close-button {
+                display: none;
+              }
+
+              .mapboxgl-popup-content {
+                font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+                padding: 0;
+                width: 180px;
+              }
+
+              .mapboxgl-popup-content-wrapper {
+                padding: 1%;
+              }
+
+              .mapboxgl-popup-content h3 {
+                background: #91c949;
+                color: #fff;
+                margin: 0;
+                display: block;
+                padding: 10px;
+                border-radius: 3px 3px 0 0;
+                font-weight: 700;
+                margin-top: -15px;
+              }
+
+              .mapboxgl-popup-content h4 {
+                margin: 0;
+                display: block;
+                padding: 10px;
+                font-weight: 400;
+              }
+
+              .mapboxgl-popup-content div {
+                padding: 10px;
+              }
+
+              .mapboxgl-container .leaflet-marker-icon {
+                cursor: pointer;
+              }
+
+              .mapboxgl-popup-anchor-top > .mapboxgl-popup-content {
+                margin-top: 15px;
+              }
+
+              .mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
+                border-bottom-color: #91c949;
+              }
+
+
+
+
+          </style>
+
+           <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js'></script>
+           <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.css' rel='stylesheet' />
+            
+            
+
+  </head>
+  <body>
+    
+
+          <div class="d-flex flex-column align-items-center">
+          
+
+          <div class='sidebar pad2'>
+               <div class='heading'>
+                  <h1>Beaches</h1>
+                </div>
+          <div id='listings' class='listings'>
+                  <div class="dropdown show">
+                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                     
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                      <a class="dropdown-item" href="#">Discover</a>
+                      <a class="dropdown-item" href="#">Profile</a>
+                      <a class="dropdown-item" href="#">Share</a>
+                    </div>
+                  </div>  
+
+
+
+
+          </div>
+
+          </div>    
+
+               <div id='map' style='width: 400px; height: 400px; margin-bottom:20px'></div>
+                    <script>
+                    mapboxgl.accessToken = 'pk.eyJ1IjoicmFmc2tvdiIsImEiOiJjam5qdGc4ejAxMzNlM3FvNXUxcHZkOXh1In0.HUCErZLauaoQryg_8krAaQ';
+                    
+                    // This adds the map to your page
+                    var map = new mapboxgl.Map({
+                      // container id specified in the HTML
+                      container: 'map',
+                      // style URL
+                      style: 'mapbox://styles/mapbox/light-v9',
+                      // initial position in [lon, lat] format
+                      center:[-122.41,37.77],
+                      // initial zoom
+                      zoom: 10
+                    });  
+
+                    var stores = {
+      "type": "FeatureCollection",
+      "features": [
+    
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [-122.4762562938768,37.8112808634946
+              
+            ]
+          },
+          "properties": {
+            "spotname": "Ft.Point"
+          }
+        },
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+             -122.5111052256233, 37.754622592301743
+            ]
+          },
+          "properties": {
+            "spotname": "Ocean Beach"
+          }
+        }]
+      };
+
+      map.on('load', function (e) {
+                // Add the data to your map as a layer
+                map.addLayer({
+                  "id": "locations",
+                  "type": "symbol",
+                  // Add a GeoJSON source containing place coordinates and information.
+                  "source": {
+                    "type": "geojson",
+                    "data": stores
+                  },
+                  "layout": {
+                    "icon-image": "restaurant-15",
+                    "icon-allow-overlap": true,
+                  }
+                });
+                // Initialize the list
+                buildLocationList(stores);
+              });
+
+
+              function buildLocationList(data) {
+                for (i = 0; i < data.features.length; i++) {
+                  // Create an array of all the stores and their properties
+                  var currentFeature = data.features[i];
+                  // Shorten data.feature.properties to just `prop` so we're not
+                  // writing this long form over and over again.
+                  var prop = currentFeature.properties;
+                  // Select the listing container in the HTML
+                  var listings = document.getElementById('listings');
+                  // Append a div with the class 'item' for each store 
+                  var listing = listings.appendChild(document.createElement('div'));
+                  listing.className = 'item';
+                  listing.id = "listing-" + i;
+
+                  // Create a new link with the class 'title' for each store 
+                  // and fill it with the store address
+                  var link = listing.appendChild(document.createElement('a'));
+                  link.href = '#';
+                  link.className = 'title';
+                  link.dataPosition = i;
+                  link.innerHTML = prop.spotname;
+
+                  // Create a new div with the class 'details' for each store 
+                  // and fill it with the city and phone number
+                  var details = listing.appendChild(document.createElement('div'));
+                  details.innerHTML = prop.spotname;
+                  if (prop.phone) {
+                    details.innerHTML += ' &middot; ' + prop.spotname;
+                  }
+
+                }
+              }
+
+              function flyToStore(currentFeature) {
+                              map.flyTo({
+                                center: currentFeature.geometry.coordinates,
+                                zoom: 15
+                              });
+                            }
+
+                            function createPopUp(currentFeature) {
+                              var popUps = document.getElementsByClassName('mapboxgl-popup');
+                              // Check if there is already a popup on the map and if so, remove it
+                              if (popUps[0]) popUps[0].remove();
+
+                              var popup = new mapboxgl.Popup({ closeOnClick: false })
+                                .setLngLat(currentFeature.geometry.coordinates)
+                                .setHTML('<h3>Name</h3>' +
+                                  '<h4>' + currentFeature.properties.spotname + '</h4>')
+                                .addTo(map);
+                            }
+
+                                              // Add an event listener for the links in the sidebar listing
+                            link.addEventListener('click', function(e) {
+                              // Update the currentFeature to the store associated with the clicked link
+                              var clickedListing = data.features[this.dataPosition];
+                              // 1. Fly to the point associated with the clicked link
+                              flyToStore(clickedListing);
+                              // 2. Close all other popups and display popup for clicked store
+                              createPopUp(clickedListing);
+                              // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+                              var activeItem = document.getElementsByClassName('active');
+                              if (activeItem[0]) {
+                                activeItem[0].classList.remove('active');
+                              }
+                              this.parentNode.classList.add('active');
+                            });
+
+                            map.on('click', function(e) {
+                                    // Query all the rendered points in the view
+                                    var features = map.queryRenderedFeatures(e.point, { layers: ['locations'] });
+                                    if (features.length) {
+                                      var clickedPoint = features[0];
+                                      // 1. Fly to the point
+                                      flyToStore(clickedPoint);
+                                      // 2. Close all other popups and display popup for clicked store
+                                      createPopUp(clickedPoint);
+                                      // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+                                      var activeItem = document.getElementsByClassName('active');
+                                      if (activeItem[0]) {
+                                        activeItem[0].classList.remove('active');
+                                      }
+                                      // Find the index of the store.features that corresponds to the clickedPoint that fired the event listener
+                                      var selectedFeature = clickedPoint.properties.spotname;
+
+                                      for (var i = 0; i < stores.features.length; i++) {
+                                        if (stores.features[i].properties.spotname === selectedFeature) {
+                                          selectedFeatureIndex = i;
+                                        }
+                                      }
+                                      // Select the correct list item using the found index and add the active class
+                                      var listing = document.getElementById('listing-' + selectedFeatureIndex);
+                                      listing.classList.add('active');
+                                    }
+                                  });
+
+
+
+
+
+
+
+
+
+
+                    </script>
+               <div class="surferrank">
+                    <div>
+
+                      <span class="badge badge-primary">Crap</span>
+                      <span class="badge badge-primary">Ok</span>
+                      <span class="badge badge-primary">Epic</span>
+                        
+                        <div>
+                        
+                              <form class="range-field">
+                                  <input type="range" min="0" max="100" />
+                              </form>
+                        </div>
+                    </div>
+
+
+             
+                </div>
+
+                 <div class="surfstats">
+
+                      <span class="badge badge-primary">MTD Sessions</span> <span class="badge badge-primary">Avg Wave Size Overall</span>
+                      <div></div>
+                      <span>5</span> <span> 3.4 </span>
+
+
+                 </div>
+
+
+                <button type="button" class="btn btn-primary" formaction="/send" formmethod="Post">Primary</button>
+
+
+                <div></div>
+
+
+                <div class="form-drop-down">
+
+              <label >I surfed here today:</label>
+
+              <select id="surfspots" class="" name="spots">
+                <option value=""></option>
+                <option value="Rockaway">Rockaway</option>
+                <option value="Lindamar">Lindamar</option>
+                <option value="Pacheco">Ocean Beach - Pacheco</option>
+                <option value="Deadman's">Deadman's</option>
+                <option value="FtPoint">Ft.Point</option>
+                <option value="PleasurePoint">Pleasure Point</option>
+                <option value="4mile">Four Mile</option>
+              </select>
+
+              </div>
+
+
+
+
+
+
+
+
+
+               <h1> Thanks for recording your session! </h1>
+
+                <p> You surfed at {{result.beach}} on a {{result.swell_height}} meter swell  coming from {{result.swell_direction}} with {{result.swell_period}} period when the wind was from the {{result.wind}} on a {{result.tide}} tide.</p>
+                <p> Overall you session was {{result.rank}} </p>
+
+
+                <a href="{{ url_for('index')}}">Go Home </a>
+
+
+
+
+
