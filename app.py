@@ -14,7 +14,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required,logo
 #need to put routes, database, and forms in sep. files
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite://///Users/rafael.skovron/Downloads/PycharmProjects/surfdiary/session.db' #config file should be separate, tells sqlal how to connect
+app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite:////home/leenux/Projects/surfdiary/session.db' #config file should be separate, tells sqlal how to connect
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 app.config['SECRET_KEY']="Thisissupposedtobesecret"
 bootstrap = Bootstrap(app)
@@ -49,6 +49,7 @@ class RegisterForm(FlaskForm):
 
 
 
+
 utc = pytz.utc
 
 
@@ -66,10 +67,11 @@ class Sessions(db.Model):
     swell_height = db.Column(db.Integer())
     swell_period = db.Column(db.Integer())
     wind = db.Column(db.String(3))
-    rank = db.Column(db.String(100))
+    rank_sesh = db.Column(db.String(100))
     tide = db.Column(db.String(50))
     stime = db.Column(db.String(20))
     etime = db.Column(db.String(20))
+    username = db.Column(db.String(20))
     #translates table
 
 class Weather(db.Model):
@@ -134,6 +136,7 @@ def logout():
     logout_user() #log them out
     return redirect(url_for('index'))
 
+@login_required
 @app.route('/send',methods=['POST','GET'])
 def send():
     if request.method =='POST':
@@ -161,27 +164,30 @@ def send():
         utc_etime = lcl_etime.astimezone(utc)
 
 
+        getsession_weather()
+
+        #import pdb; pdb.set_trace()
+
+        #session_update = Sessions(beach=session_beach,rank_sesh=session_rank,stime=stime,etime=utc_etime,)
 
 
-        session_update = Sessions(beach=session_beach,rank=session_rank,stime=stime,etime=utc_etime)
-
-
-        db.session.add(session_update)
-        db.session.commit()
+        #db.session.add(session_update)
+        #db.session.commit()
 
         #return redirect(url_for('session_log')) #dont return view or template
         result = Sessions.query.all()
         result.reverse()
 
-        getsession_weather()
+        print(result)
 
-        return render_template('session.html',result=result)
+        return render_template('session.html',result=result[0])
 
 def getsession_weather():
     #pick the etime
     if request.method =='POST':
         etime = request.form['etimepicker']
         rank_sesh = request.form['overall']
+
 
         day = datetime.date.today()
         #split out the hour and minutes in the session end time
@@ -200,14 +206,14 @@ def getsession_weather():
         utc_etime = lcl_etime.astimezone(utc)
 
 
-        utc_etime_offset = utc_etime - datetime.timedelta(days=20)
+        utc_etime_offset = utc_etime - datetime.timedelta(hours=1)
 
         print('offset',utc_etime_offset)
         print('utcetime',utc_etime)
 
         session_beach= request.form['spots']
 
-        conn = sqlite3.connect('/Users/rafael.skovron/Downloads/PycharmProjects/surfdiary/session.db')
+        conn = sqlite3.connect('/home/leenux/Projects/surfdiary/session.db')
 
 
         #create a query based on etime
@@ -225,13 +231,32 @@ def getsession_weather():
 
 
 
-        print(utc_etime_offset.strftime("%Y-%m-%d %H:%M"),key)
+        print("key",utc_etime_offset.strftime("%Y-%m-%d %H:%M"),key)
+
+        #import pdb; pdb.set_trace()
 
         # need to fix this query
 
         c.execute("select * from weather where dtbuoy < (?) AND dtbuoy >= (?) AND key = (?)", (utc_etime.strftime("%Y-%m-%d %H:%M"),utc_etime_offset.strftime("%Y-%m-%d %H:%M"),key,))
 
         weather_update = c.fetchall()
+
+        #handle exception logic if there's no buoy data recorded
+
+        #import pdb; pdb.set_trace()
+
+        counter=0
+        while len(weather_update) == 0 and counter<24:
+            utc_etime_offset = utc_etime - datetime.timedelta(hours=counter) 
+            c.execute("select * from weather where dtbuoy < (?) AND dtbuoy >= (?) AND key = (?)", (utc_etime.strftime("%Y-%m-%d %H:%M"),utc_etime_offset.strftime("%Y-%m-%d %H:%M"),key,))
+            weather_update = c.fetchall()
+            counter+=1  
+
+        if len(weather_update)==0:
+           c.execute("select * from weather")  
+        weather_update = c.fetchall()
+
+
         print(len(weather_update))
 
         print("printing weather UPDATE")
@@ -256,14 +281,18 @@ def getsession_weather():
         print(weather_update[6])
 
 
-        c.execute('''INSERT INTO sessions(rank_sesh,swell_direction,swell_height,swell_period,wind,tide,beachregion) VALUES (?,?,?,?,?,?,?)''',[rank_sesh,weather_update[4],weather_update[3],weather_update[5],weather_update[0],weather_update[2],weather_update[6]])
+        c.execute('''INSERT INTO Sessions(beach,rank_sesh,swell_direction,swell_height,swell_period,wind,tide,etime,username) VALUES (?,?,?,?,?,?,?,?,?)''',[session_beach,rank_sesh,weather_update[4],weather_update[3],weather_update[5],weather_update[0],weather_update[2],weather_update[8],current_user.username ])
 
         conn.commit()
 
         conn.close()
 
 
-
+def get_MTD_surfstats():
+        conn = sqlite3.connect('/home/leenux/Projects/surfdiary/session.db')
+        c = conn.cursor()
+        c.execute("SELECT COUNT(*) from Sessions where user= %s AND dtbuoy > %s",[str(current_user.username),needtoxiffffff])
+        number_of_rows =c.fetchone() 
 
 
 
