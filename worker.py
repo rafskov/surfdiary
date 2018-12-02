@@ -93,7 +93,7 @@ def get_weatherentry(key,zipcode):
 
 def main():
 
-    database = 'session.db'
+    database = '/home/leenux/Projects/surfdiary/session.db'
     conn = create_connection(database)
 
     with conn:
