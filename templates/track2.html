@@ -418,22 +418,8 @@
 
                     </script>
                <div class="surferrank">
-                    <div>
-
-                      <span class="badge badge-primary">Crap</span>
-                      <span class="badge badge-primary">Ok</span>
-                      <span class="badge badge-primary">Epic</span>
-                        
-                        <div>
-                        
-                              <form class="range-field">
-                                  <input type="range" min="0" max="100" />
-                              </form>
-                        </div>
-                    </div>
-
-
-             
+                   <input id="slider" type="range" min="50" max="100" step="10" oninput="sliderChange(this.value)">
+                  <output id="output"></output>
                 </div>
 
                  <div class="surfstats">
@@ -446,6 +432,31 @@
                  </div>
 
 
+                <form method="POST" action="/send">
+                  <input type="submit" class="btn btn-primary" value="Track Session"/>
+                </form>
+
+                <div></div>
+
+
+                <div class="form-drop-down">
+
+              <label >I surfed here today:</label>
+
+              <select id="surfspots" class="" name="spots">
+                <option value=""></option>
+                <option value="Rockaway">Rockaway</option>
+                <option value="Lindamar">Lindamar</option>
+                <option value="Pacheco">Ocean Beach - Pacheco</option>
+                <option value="Deadman's">Deadman's</option>
+                <option value="FtPoint">Ft.Point</option>
+                <option value="PleasurePoint">Pleasure Point</option>
+                <option value="4mile">Four Mile</option>
+              </select>
+
+              </div>
+
+             
 
 
 
@@ -455,14 +466,14 @@
 
 
 
+              <script>
 
+               function sliderChange(val) {
+                      document.getElementById('output').innerHTML = val;
+                  }
+                  document.getElementById('slider').value = 50;
 
-
-
-
-
-
-
+              </script>
 
 
 
@@ -473,5 +484,6 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
   </body>
 </html>
