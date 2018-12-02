@@ -140,7 +140,7 @@ def logout():
 @app.route('/send',methods=['POST','GET'])
 def send():
     if request.method =='POST':
-        session_rank = request.form['overall']
+        session_rank = request.form['output']
         session_beach= request.form['spots']
         stime =request.form['stimepicker']
         etime = request.form['etimepicker']
