@@ -8,6 +8,9 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    <script src="{{url_for('static', filename='wickedpicker.js')}}"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
     <title>track your surf session</title>
 
 
@@ -417,6 +420,10 @@
 
 
                     </script>
+
+
+                <h3> Rank your session. 100 being awesome</h3>
+
                <div class="surferrank">
                    <input id="slider" type="range" min="50" max="100" step="10" oninput="sliderChange(this.value)">
                   <output id="output"></output>
@@ -431,15 +438,70 @@
 
                  </div>
 
+                 <script>
+                 $(document).ready(function(){
+                    $('#stats').submit(function(event) {
+                      let val = $('#etimepicker').val()
+                      $('#etimepickerinput').val(val)
+                      let val_spots = $('#surfspots').val()
+                      $('#spots').val(val_spots)
+                      let val_output = $('output').val()
+                      $('#output_rank').val(val_output)
+                      let val_stime = $('#stimepicker').val()
+                      $('#stimepickerinput').val(val_stime)
 
-                <form method='POST' action='/send'>
+                  });
+
+
+               });
+                  </script>
+
+
+
+
+
+                <form method='POST' action='/send' id="stats">
+                  <input type="hidden" id="output_rank" name="output">
+                  <input type="hidden" id="spots" name="surfspots">
+                  <input type="hidden" id="etimepickerinput" name="etimepicker" >
+                  <input type="hidden" id="stimepickerinput" name="stimepicker" >
+
+
+
+
+
                   <input type="submit" class="btn btn-primary" value="Track Session"/>
+                     
+
+
                 </form>
 
                 <div></div>
 
 
-                <div class="form-drop-down">
+              <div class="form-drop-down">
+
+
+                <h2> Pick your session start time </h2>
+                  <input type="text" id="stimepicker" name="stimepicker" class="timepicker form-control">
+                  <br>
+                      <script type="text/javascript">
+                      $('.timepicker').wickedpicker({twentyFour: true});
+                      $('.timepicker').wickedpicker({twentyFour: true});
+                      </script>
+
+
+
+
+                  <h2> Pick your session end time </h2>
+                  <input type="text" id="etimepicker" name="etimepicker" class="timepicker form-control">
+                  <br>
+                      <script type="text/javascript">
+                      $('.timepicker').wickedpicker({twentyFour: true});
+                      $('.timepicker').wickedpicker({twentyFour: true});
+                      </script>
+
+
 
               <label >I surfed here today:</label>
 
@@ -457,7 +519,7 @@
               </div>
 
              
-
+            
 
 
 
@@ -471,7 +533,7 @@
                function sliderChange(val) {
                       document.getElementById('output').innerHTML = val;
                   }
-                  document.getElementById('slider').value = 50;
+                 
 
               </script>
 
@@ -481,7 +543,7 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
