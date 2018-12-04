@@ -92,7 +92,7 @@ def index():
 
     result = Sessions.query.all() #return results in sessions table in a list of sqlacl objects
 
-    return render_template('index.html',result=result)
+    return render_template('track2.html',result=result)
 
 @app.route('/login',methods=['GET','POST'])
 def login():
@@ -140,13 +140,15 @@ def logout():
 @app.route('/send',methods=['POST','GET'])
 def send():
     if request.method =='POST':
-        session_rank = request.form['output']
-        session_beach= request.form['spots']
+        rank_sesh = request.form['output']
+        session_beach= request.form['surfspots']
         stime =request.form['stimepicker']
         etime = request.form['etimepicker']
         #get today's date in UTC....causes issues if function is run after 6pm PST (causes next day to be grabbed)
         day = datetime.date.today()
         #split out the hour and minutes in the session end time
+        #import pdb; pdb.set_trace()
+
         etime = etime.split(':')
         #destructure list
         a,b= etime
@@ -185,8 +187,12 @@ def send():
 def getsession_weather():
     #pick the etime
     if request.method =='POST':
+        
+        rank_sesh = request.form['output']
+        session_beach= request.form['surfspots']
+        stime =request.form['stimepicker']
         etime = request.form['etimepicker']
-        rank_sesh = request.form['overall']
+
 
 
         day = datetime.date.today()
@@ -211,7 +217,7 @@ def getsession_weather():
         print('offset',utc_etime_offset)
         print('utcetime',utc_etime)
 
-        session_beach= request.form['spots']
+        session_beach= request.form['surfspots']
 
         conn = sqlite3.connect('/home/leenux/Projects/surfdiary/session.db')
 
@@ -221,7 +227,7 @@ def getsession_weather():
         #store results in session variables
         #write sessions variables to session db
 
-        session_beach= request.form['spots']
+        session_beach= request.form['surfspots']
         if session_beach not in ['4mile','PleasurePoint']:
             key = "oceanbeach"
         else:
@@ -243,24 +249,40 @@ def getsession_weather():
 
         #handle exception logic if there's no buoy data recorded
 
+        conn.close()
+
         #import pdb; pdb.set_trace()
 
+        conn = sqlite3.connect('/home/leenux/Projects/surfdiary/session.db')
+
+
+        c = conn.cursor()            
+
         counter=0
-        while len(weather_update) == 0 and counter<24:
+        while len(weather_update) == 0 and counter<72:
             utc_etime_offset = utc_etime - datetime.timedelta(hours=counter) 
             c.execute("select * from weather where dtbuoy < (?) AND dtbuoy >= (?) AND key = (?)", (utc_etime.strftime("%Y-%m-%d %H:%M"),utc_etime_offset.strftime("%Y-%m-%d %H:%M"),key,))
             weather_update = c.fetchall()
+            #import pdb; pdb.set_trace()
+            print(counter,utc_etime_offset)
             counter+=1  
 
-        if len(weather_update)==0:
+
+        if len(weather_update)!=0:
            c.execute("select * from weather")  
+        #import pdb;pdb.set_trace()
+        
+        print("printing fetchal")
+
         weather_update = c.fetchall()
 
+        print("weather update",weather_update)
 
         print(len(weather_update))
 
         print("printing weather UPDATE")
         print(weather_update)
+        #import pdb; pdb.set_trace()
         weather_update = weather_update[-1]
         print("printing last ITEM IN WEATHER UPDATE")
         print(weather_update)
