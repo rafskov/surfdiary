@@ -11,6 +11,7 @@ from wtforms import StringField,PasswordField,BooleanField #BooleanField is for 
 from wtforms.validators import InputRequired,Email,Length
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required,logout_user,current_user
+
 #need to put routes, database, and forms in sep. files
 
 app = Flask(__name__)
@@ -168,6 +169,9 @@ def send():
 
         getsession_weather()
 
+        print("get_MTD_surfstats is running")
+        MTD_count=get_MTD_surfstats()
+
         #import pdb; pdb.set_trace()
 
         #session_update = Sessions(beach=session_beach,rank_sesh=session_rank,stime=stime,etime=utc_etime,)
@@ -177,12 +181,14 @@ def send():
         #db.session.commit()
 
         #return redirect(url_for('session_log')) #dont return view or template
+        import pdb;pdb.set_trace()
         result = Sessions.query.all()
         result.reverse()
 
-        print(result)
+        
 
-        return render_template('session.html',result=result[0])
+
+        return render_template('session.html',result=result[0],MTD_count=MTD_count)
 
 def getsession_weather():
     #pick the etime
@@ -307,19 +313,49 @@ def getsession_weather():
 
         conn.commit()
 
+
+
         conn.close()
 
 
+@login_required       
 def get_MTD_surfstats():
+        day = datetime.date.today()
+        #split out the hour and minutes in the session end time
+        #import pdb; pdb.set_trace()
+
+        print("day",day)
+
+        today = datetime.datetime(day.year,day.month,day.day)
+        #need to change code to reflect querying from cached db
+
+        print("today",today)
+        pacific = timezone('US/Pacific')
+
+        #change from naive to timeaware
+        lcl_today = pacific.localize(today)
+        #change to utc
+        utc_today = lcl_today.astimezone(utc)
+
+
         conn = sqlite3.connect('/home/leenux/Projects/surfdiary/session.db')
         c = conn.cursor()
-        c.execute("SELECT COUNT(*) from Sessions where user= %s AND dtbuoy > %s",[str(current_user.username),needtoxiffffff])
-        number_of_rows =c.fetchone() 
+        import pdb;pdb.set_trace()
+        utc_MTD = utc_today-datetime.timedelta(days=30)
+        c.execute("SELECT COUNT(*) from {0} where username={1} AND etime >'{2}'".format("'Sessions'",'username',utc_MTD))
+        MTD =c.fetchall() 
+        #returns one element list with tuple in it
+        MTD_count = MTD[0][0]
+        print("MTD_count",MTD_count)
 
+        MTD_count=str(MTD_count)
 
+        #try:
+        return MTD_count
+        #except Error as e:
+            #print("error was"+e.message)
 
-
-
+        
 
 
 
