@@ -220,6 +220,36 @@
   </head>
   <body>
     
+        
+          <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+
+               <a class="navbar-brand" href="{{ url_for('track') }}">
+                  <img src="/static/track.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                  Track
+              </a>
+
+               <a class="navbar-brand" href="{{ url_for('discover') }}">
+                  <img src="/static/discover.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                  Discover
+              </a>
+
+               <a class="navbar-brand" href="{{ url_for('editprofile') }}">
+                  <img src="/static/profile.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                  Profile
+              </a>
+
+
+          </nav>
+
+
+
+
+
+
+
+
+
+
 
           <div class="d-flex flex-column align-items-center">
           
@@ -525,7 +555,7 @@
                 <p> Overall you session was {{result.rank}} </p>
 
 
-                <a href="{{ url_for('index')}}">Go Home </a>
+                <a href="{{ url_for('discover')}}">Go Home </a>
 
 
 
