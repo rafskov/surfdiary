@@ -11,6 +11,8 @@ from wtforms import StringField,PasswordField,BooleanField #BooleanField is for 
 from wtforms.validators import InputRequired,Email,Length
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required,logout_user,current_user
+from flask import Markup
+import requests
 
 #need to put routes, database, and forms in sep. files
 
@@ -88,12 +90,38 @@ class Weather(db.Model):
     dtbuoy= db.Column(db.String(20))
 
 
+
+@app.route('/discover')
 @app.route('/')
-def index():
+def discover():
 
-    result = Sessions.query.all() #return results in sessions table in a list of sqlacl objects
+    return render_template('discover.html')
 
-    return render_template('track2.html',result=result)
+
+@app.route('/track')
+def track():
+    return render_template('track2.html')
+
+
+@app.route('/editprofile')
+def editprofile():
+  
+    #return render_template('profile.html')
+        
+        r=requests.get('http://api.spitcast.com/api/spot/forecast/117/?dcat=week')
+        rjson=r.json()
+        values=[]
+
+        for item in rjson:
+            values.append(item['size_ft'])
+
+
+        legend = 'Weekly Data'
+        labels = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+        return render_template('profile.html', values=values, labels=labels)
+
+
+
 
 @app.route('/login',methods=['GET','POST'])
 def login():
@@ -106,7 +134,7 @@ def login():
         if user: #if they exist
             if check_password_hash(user.password,form.password.data): #compare hash in table to what was passed in from the form
                 login_user(user,remember=form.remember.data)#login the user
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('editprofile'))
         return '<h1> invalid user name or password </h1>'
 
     return render_template('login.html', form=form)
@@ -125,10 +153,7 @@ def signup():
 
     return render_template('signup.html',form=form) #pass initialized form to template
 
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    return render_template('dashboard.html',name=current_user.username)
+
 
 
 @app.route('/logout')
