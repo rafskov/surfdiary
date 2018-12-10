@@ -219,6 +219,28 @@
 
   </head>
   <body>
+
+
+          <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+
+               <a class="navbar-brand" href="{{ url_for('track') }}">
+                  <img src="/static/track.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                  Track
+              </a>
+
+               <a class="navbar-brand" href="{{ url_for('discover') }}">
+                  <img src="/static/discover.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                  Discover
+              </a>
+
+               <a class="navbar-brand" href="{{ url_for('editprofile') }}">
+                  <img src="/static/profile.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+                  Profile
+              </a>
+
+
+          </nav>
+
     
 
           <div class="d-flex flex-column align-items-center">
@@ -228,23 +250,7 @@
                <div class='heading'>
                   <h1>Beaches</h1>
                 </div>
-          <div id='listings' class='listings'>
-                  <div class="dropdown show">
-                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                     
-                    </a>
 
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                      <a class="dropdown-item" href="#">Discover</a>
-                      <a class="dropdown-item" href="#">Profile</a>
-                      <a class="dropdown-item" href="#">Share</a>
-                    </div>
-                  </div>  
-
-
-
-
-          </div>
 
           </div>    
 
@@ -429,14 +435,7 @@
                   <output id="output"></output>
                 </div>
 
-                 <div class="surfstats">
-
-                      <span class="badge badge-primary">MTD Sessions</span> <span class="badge badge-primary">Avg Wave Size Overall</span>
-                      <div></div>
-                      <span>5</span> <span> 3.4 </span>
-
-
-                 </div>
+               
 
                  <script>
                  $(document).ready(function(){
@@ -456,27 +455,6 @@
                });
                   </script>
 
-
-
-
-
-                <form method='POST' action='/send' id="stats">
-                  <input type="hidden" id="output_rank" name="output">
-                  <input type="hidden" id="spots" name="surfspots">
-                  <input type="hidden" id="etimepickerinput" name="etimepicker" >
-                  <input type="hidden" id="stimepickerinput" name="stimepicker" >
-
-
-
-
-
-                  <input type="submit" class="btn btn-primary" value="Track Session"/>
-                     
-
-
-                </form>
-
-                <div></div>
 
 
               <div class="form-drop-down">
@@ -519,7 +497,21 @@
               </div>
 
              
-            
+              <form method='POST' action='/send' id="stats">
+                  <input type="hidden" id="output_rank" name="output">
+                  <input type="hidden" id="spots" name="surfspots">
+                  <input type="hidden" id="etimepickerinput" name="etimepicker" >
+                  <input type="hidden" id="stimepickerinput" name="stimepicker" >
+
+
+
+
+
+                  <input type="submit" class="btn btn-primary" value="Track Session"/>
+                     
+
+
+                </form>
 
 
 
@@ -537,6 +529,21 @@
 
               </script>
 
+
+       
+              <nav class="navbar fixed-bottom navbar-expand-lg navbar-light bg-light">
+
+                   <a class="navbar-brand" href="{{ url_for('login') }}">
+                      
+                      Login here
+                  </a>
+
+                   <a class="navbar-brand" href="{{ url_for('signup') }}">
+                     
+                      Sign up here
+                  </a>
+
+            </nav>
 
 
 
