@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Surf Tracker</title>
+
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js'></script>
+  </head>
+  <body>
+
+
+
+
+    <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+
+       <a class="navbar-brand" href="{{ url_for('track') }}">
+          <img src="/static/track.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+          Track
+      </a>
+
+       <a class="navbar-brand" href="{{ url_for('discover') }}">
+          <img src="/static/discover.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+          Discover
+      </a>
+
+       <a class="navbar-brand" href="{{ url_for('editprofile') }}">
+          <img src="/static/profile.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+          Profile
+      </a>
+
+
+    </nav>
+
+
+
+
+
+
+
+
+    <h1>Welcome,{{current_user.username}}!</h1>
+
+    
+    <div class="container">
+          <div class="row align-items-start">
+              <div class="col">
+                
+                  <label >Select the surf spot you want to receive a forecast for</label>
+
+                  <select id="forecastspots" class="" name="spots">
+                      <option value=""></option>
+                      <option value="Rockaway">Rockaway</option>
+                      <option value="Lindamar">Lindamar</option>
+                      <option value="Pacheco">Ocean Beach - Pacheco</option>
+                      <option value="Deadman's">Deadman's</option>
+                      <option value="FtPoint">Ft.Point</option>
+                      <option value="PleasurePoint">Pleasure Point</option>
+                      <option value="4mile">Four Mile</option>
+                  </select>
+
+              </div>
+              <div class="col">
+                
+                    
+                
+                <h1>Your Surf Forecast</h1>
+                <!-- bar chart canvas element -->
+                <canvas id="myChart"></canvas>
+               
+
+
+
+
+
+              </div>
+              <div class="col">
+                One of three columns
+              </div>
+          </div>
+          <div class="row align-items-center">
+              <div class="col">
+                One of three columns
+              </div>
+              <div class="col">
+                <form method='POST' action='/editprofile' id="stats">
+                      <input type="submit" class="btn btn-primary" value="Save Profile"/>
+                  </forms>
+              </div>
+              <div class="col">
+                Middle Row Right
+              </div>
+          </div>
+          <div class="row align-items-end">
+              <div class="col">
+                One of three columns
+              </div>
+              <div class="col">
+                One of three columns
+              </div>
+              <div class="col">
+                One of three columns
+              </div>
+          </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+
+            <nav class="navbar fixed-bottom navbar-expand-lg navbar-light bg-light">
+
+                   <a class="navbar-brand" href="{{ url_for('login') }}">
+                      
+                      Login here
+                  </a>
+
+                   <a class="navbar-brand" href="{{ url_for('signup') }}">
+                     
+                      Sign up here
+                  </a>
+
+            </nav>
+
+
+
+
+
+
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+   <script>
+     // Global parameters:
+// do not resize the chart canvas when its container does (keep at 600x400px)
+console.log("chart is firing")
+
+Chart.defaults.global.responsive = false;
+ 
+// define the chart data
+var chartData = {
+  labels : [{% for item in labels %}
+             "{{item}}",
+            {% endfor %}],
+  datasets : [{
+      label: '{{ legend }}',
+      fill: true,
+      lineTension: 0.1,
+      backgroundColor: "rgba(75,192,192,0.4)",
+      borderColor: "rgba(75,192,192,1)",
+      borderCapStyle: 'butt',
+      borderDash: [],
+      borderDashOffset: 0.0,
+      borderJoinStyle: 'miter',
+      pointBorderColor: "rgba(75,192,192,1)",
+      pointBackgroundColor: "#fff",
+      pointBorderWidth: 1,
+      pointHoverRadius: 5,
+      pointHoverBackgroundColor: "rgba(75,192,192,1)",
+      pointHoverBorderColor: "rgba(220,220,220,1)",
+      pointHoverBorderWidth: 2,
+      pointRadius: 1,
+      pointHitRadius: 10,
+      data : [{% for item in values %}
+                {{item}},
+              {% endfor %}],
+      spanGaps: false
+  }]
+}
+ 
+// get chart canvas
+var ctx = document.getElementById("myChart").getContext("2d");
+ 
+// create the chart using the chart canvas
+var myChart = new Chart(ctx, {
+  type: 'line',
+  data: chartData,
+
+  options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    suggestedMin: 0,
+                    suggestedMax: 10,
+                    stepsize:2
+                }
+            }]
+        }
+    }
+
+
+
+});
+
+</script>
+
+
+
+  </body>
+</html>
